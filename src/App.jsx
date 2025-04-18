@@ -1,10 +1,11 @@
+// App.jsx
 import React, { useState, useEffect, useRef } from 'react';
 
-
 // Базовые URL для разных сервисов
-const UPLOAD_BASE_URL = 'http://172.29.62.95:8000'; // Для загрузки видео и получения списка кадров
-const FRAMES_BASE_URL = 'http://172.29.62.95:9000'; // Для загрузки самих картинок
-const CLASSIFICATION_URL = 'http://172.29.62.95:8000/classifications/'; // Для отправки порога четкости
+const UPLOAD_BASE_URL = 'http://172.29.62.95:8000';           // Для загрузки видео и получения списка кадров
+const FRAMES_BASE_URL = 'http://172.29.62.95:9000';           // Для загрузки самих картинок
+const CLASSIFICATION_URL = 'http://172.29.62.95:8000/classifications/';            // Для первичной классификации
+const CORRECT_CLASSIFICATION_URL = 'http://172.29.62.95:8000/correct-classification/'; // Для ручной коррекции
 
 function Header() {
   const [darkMode, setDarkMode] = useState(false);
@@ -33,14 +34,17 @@ function Header() {
       >
         <span className={isRotating ? 'animate-spin-slow' : ''}>
           {darkMode ? (
-            // Иконка солнца (для перехода в светлый режим)
             <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707
+                   M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707
+                   M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
             </svg>
           ) : (
-            // Иконка луны (для перехода в тёмный режим)
             <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                d="M20.354 15.354A9 9 0 018.646 3.646
+                   9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
             </svg>
           )}
         </span>
@@ -80,9 +84,7 @@ function Toast({ message, type, onClose }) {
 
 function FrameGallery({ frames, classificationResults, openModal }) {
   const getSharpnessStatus = frameNumber =>
-    classificationResults.find(
-      res => Number(res.frame_number) === Number(frameNumber)
-    );
+    classificationResults.find(res => Number(res.frame_number) === Number(frameNumber));
 
   return (
     <div className="p-4 sm:p-8 rounded-3xl w-full sm:w-96 text-center bg-white dark:bg-gray-800 shadow-2xl hover:shadow-3xl hover:scale-105 transition-all duration-300">
@@ -92,15 +94,12 @@ function FrameGallery({ frames, classificationResults, openModal }) {
 
       {frames && frames.length > 0 ? (
         classificationResults.length === 0 ? (
-          <p className="text-gray-500 dark:text-gray-400 text-lg">
-            Ожидание классификации...
-          </p>
+          <p className="text-gray-500 dark:text-gray-400 text-lg">Ожидание классификации...</p>
         ) : (
           <div className="flex flex-wrap justify-center gap-4">
             {frames.map(frame => {
               const result = getSharpnessStatus(frame.frame_number);
               const isSharp = result?.is_sharp;
-
               return (
                 <div
                   key={frame.frame_number}
@@ -111,44 +110,17 @@ function FrameGallery({ frames, classificationResults, openModal }) {
                     src={`${FRAMES_BASE_URL}${frame.url}`}
                     alt={`Frame ${frame.frame_number}`}
                     className="w-full h-full object-cover"
-                    onError={e =>
-                      (e.target.src =
-                        'https://via.placeholder.com/150?text=Error')
-                    }
+                    onError={e => (e.target.src = 'https://via.placeholder.com/150?text=Error')}
                   />
-
                   {isSharp != null && (
                     <div className="absolute inset-0 flex items-center justify-center">
                       {isSharp ? (
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="w-10 h-10"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                          strokeWidth={2}
-                          style={{ color: "#66FF00" }}
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M5 13l4 4L19 7"
-                          />
+                        <svg xmlns="http://www.w3.org/2000/svg" className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} style={{ color: "#66FF00" }}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                         </svg>
                       ) : (
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="w-10 h-10 text-red-500"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                          strokeWidth={2}
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M6 18L18 6M6 6l12 12"
-                          />
+                        <svg xmlns="http://www.w3.org/2000/svg" className="w-10 h-10 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                         </svg>
                       )}
                     </div>
@@ -159,52 +131,39 @@ function FrameGallery({ frames, classificationResults, openModal }) {
           </div>
         )
       ) : (
-        <p className="text-gray-500 dark:text-gray-400 text-lg">
-          Кадры отсутствуют
-        </p>
+        <p className="text-gray-500 dark:text-gray-400 text-lg">Кадры отсутствуют</p>
       )}
     </div>
   );
 }
 
-
-
-
-
-
 function Parameters({ samplingRate, setSamplingRate, loyalty, setLoyalty }) {
-  const handleLoyaltyChange = (value) => {
-    setLoyalty(value);
-  };
+  const handleLoyaltyChange = value => setLoyalty(value);
 
   return (
     <div className="p-4 sm:p-8 rounded-3xl w-full sm:w-96 text-center bg-white dark:bg-gray-800 shadow-2xl hover:shadow-3xl hover:scale-105 transition-all duration-300">
       <h2 className="text-4xl font-extrabold mb-4 tracking-tight text-black dark:text-white">Параметры</h2>
       <div className="text-left text-gray-700 dark:text-gray-300">
         <div className="mb-4">
-          <label className="block mb-2 font-semibold">
-            Частота выборки кадра с видео: {samplingRate}
-          </label>
+          <label className="block mb-2 font-semibold">Частота выборки кадра с видео: {samplingRate}</label>
           <input
             type="range"
             min="0"
             max="1"
             step="0.1"
             value={samplingRate}
-            onChange={(e) => setSamplingRate(Number(e.target.value))}
+            onChange={e => setSamplingRate(Number(e.target.value))}
             className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 accent-blue-500"
           />
         </div>
         <div className="mb-4">
-          <label className="block mb-2 font-semibold">
-            Порог четкости при классификации: {loyalty}
-          </label>
+          <label className="block mb-2 font-semibold">Порог четкости при классификации: {loyalty}</label>
           <input
             type="range"
             min="0"
             max="100"
             value={loyalty}
-            onChange={(e) => handleLoyaltyChange(Number(e.target.value))}
+            onChange={e => handleLoyaltyChange(Number(e.target.value))}
             className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 accent-blue-500"
           />
         </div>
@@ -231,11 +190,9 @@ function FileStats({ file, duration, fps, resolution, videoHash }) {
       alert('Видео-хеш не найден. Пожалуйста, загрузите видео.');
       return;
     }
-
     try {
-      const response = await fetch(`http://172.29.62.95:8000/reports/${videoHash}/full/?format=json`);
+      const response = await fetch(`${UPLOAD_BASE_URL}/reports/${videoHash}/full/?format=json`);
       if (!response.ok) throw new Error('Ошибка при получении отчета');
-
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -281,9 +238,18 @@ function FileStats({ file, duration, fps, resolution, videoHash }) {
   );
 }
 
-
-
-function VideoUploader({ setFileForStats, setVideoDuration, setVideoFps, setVideoResolution, setFrames, samplingRate, setVideoHash, setFps, loyalty, setClassificationResults }) {
+function VideoUploader({
+  setFileForStats,
+  setVideoDuration,
+  setVideoFps,
+  setVideoResolution,
+  setFrames,
+  samplingRate,
+  setVideoHash,
+  setFps,
+  loyalty,
+  setClassificationResults
+}) {
   const [dragActive, setDragActive] = useState(false);
   const [file, setFile] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -330,26 +296,23 @@ function VideoUploader({ setFileForStats, setVideoDuration, setVideoFps, setVide
 
   const sendLoyalty = async (videoHash, fps, loyaltyValue) => {
     try {
-      const response = await fetch(CLASSIFICATION_URL, {
-        method: 'POST',
+      const response = await fetch(CLASSIFICATION_URL, {        method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
-          'Accept': 'application/json',
+          'Accept': 'application/json'
         },
-        body: `video_hash=${videoHash}&fps=${fps}&loyalty=${loyaltyValue}`,
+        body: `video_hash=${videoHash}&fps=${fps}&loyalty=${loyaltyValue}`
       });
-
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(`Ошибка отправки параметров классификации: ${response.status} - ${JSON.stringify(errorData)}`);
       }
-
       const data = await response.json();
-      console.log('Classification response:', data); // Отладочный лог
-      setClassificationResults(data.results || []); // Сохраняем результаты классификации
+      console.log('Classification response:', data);
+      setClassificationResults(data.results || []);
       setShowSuccessToast(true);
     } catch (error) {
-      console.error('Classification error:', error); // Отладочный лог
+      console.error('Classification error:', error);
       setErrorMessage(`Ошибка отправки параметров классификации: ${error.message}`);
       setShowErrorToast(true);
     }
@@ -358,18 +321,13 @@ function VideoUploader({ setFileForStats, setVideoDuration, setVideoFps, setVide
   const fetchFrames = async (videoHash, fps) => {
     try {
       const framesUrl = `${UPLOAD_BASE_URL}/frames/${videoHash}/${fps}/`;
-      const res = await fetch(framesUrl, {
-        method: 'GET',
-        headers: { Accept: 'application/json' },
-      });
-      if (!res.ok) {
-        throw new Error(`Ошибка получения кадров: ${res.status}`);
-      }
+      const res = await fetch(framesUrl, { method: 'GET', headers: { Accept: 'application/json' } });
+      if (!res.ok) throw new Error(`Ошибка получения кадров: ${res.status}`);
       const data = await res.json();
-      console.log('Frames fetched:', data); // Отладочный лог
+      console.log('Frames fetched:', data);
       setFrames(data.frames || []);
     } catch (e) {
-      console.error('Frames fetch error:', e); // Отладочный лог
+      console.error('Frames fetch error:', e);
       setErrorMessage(`Ошибка получения кадров: ${e.message}`);
       setShowErrorToast(true);
     }
@@ -378,12 +336,8 @@ function VideoUploader({ setFileForStats, setVideoDuration, setVideoFps, setVide
   const uploadBinary = async f => {
     const formData = new FormData();
     formData.append('file', f);
-
-    // Проверяем samplingRate, если 0 — устанавливаем минимальное значение 0.1
     const fpsToSend = samplingRate === 0 ? 0.1 : samplingRate;
     formData.append('fps', String(fpsToSend));
-
-    // Логируем данные, которые отправляем
     console.log('Отправляемые данные:', { file: f.name, fps: fpsToSend });
 
     try {
@@ -392,18 +346,14 @@ function VideoUploader({ setFileForStats, setVideoDuration, setVideoFps, setVide
       const res = await fetch(uploadUrl, {
         method: 'POST',
         headers: { Accept: 'application/json' },
-        body: formData,
+        body: formData
       });
-
-      // Логируем статус ответа
       console.log('Статус ответа:', res.status);
-
       if (!res.ok) {
         const text = await res.text();
         console.error('Ошибка сервера:', text);
         throw new Error(`${res.status} ${text}`);
       }
-
       const data = await res.json();
       console.log('Ответ сервера:', data);
 
@@ -411,10 +361,9 @@ function VideoUploader({ setFileForStats, setVideoDuration, setVideoFps, setVide
       setShowSuccessToast(true);
 
       if (data.video_hash && data.fps) {
-        setVideoHash(data.video_hash); // Сохраняем video_hash
-        setFps(data.fps); // Сохраняем fps
+        setVideoHash(data.video_hash);
+        setFps(data.fps);
         await fetchFrames(data.video_hash, data.fps);
-        // Отправляем параметры классификации после успешной загрузки видео
         await sendLoyalty(data.video_hash, data.fps, loyalty);
       } else {
         setErrorMessage('Не удалось получить video_hash или fps из ответа сервера');
@@ -437,7 +386,7 @@ function VideoUploader({ setFileForStats, setVideoDuration, setVideoFps, setVide
           clearInterval(interval);
           return 100;
         }
-        return next;
+        return next
       });
     }, 300);
   };
@@ -449,13 +398,13 @@ function VideoUploader({ setFileForStats, setVideoDuration, setVideoFps, setVide
     setVideoFps(null);
     setVideoResolution(null);
     setFrames([]);
-    setVideoHash(null); // Очищаем video_hash
-    setFps(null); // Очищаем fps
+    setVideoHash(null);
+    setFps(null);
     setUploadProgress(0);
     setErrorMessage('');
     setShowSuccessToast(false);
     setShowErrorToast(false);
-    setClassificationResults([]); // Очищаем результаты классификации
+    setClassificationResults([]);
   };
 
   useEffect(() => {
@@ -478,11 +427,16 @@ function VideoUploader({ setFileForStats, setVideoDuration, setVideoFps, setVide
         onDragOver={handleDrag}
         onDragLeave={handleDrag}
         onDrop={handleDrop}
-        className={`border-2 border-dashed border-blue-400 p-6 rounded-2xl transition-all duration-300 bg-white dark:bg-gray-900 text-black dark:text-white shadow-2xl ${dragActive ? "border-blue-500 bg-blue-50 dark:bg-blue-800 scale-105" : ""}`}
+        className={`border-2 border-dashed border-blue-400 p-6 rounded-2xl transition-all duration-300 bg-white dark:bg-gray-900 text-black dark:text-white shadow-2xl ${
+          dragActive ? "border-blue-500 bg-blue-50 dark:bg-blue-800 scale-105" : ""
+        }`}
       >
         <div className="flex justify-center mb-4">
           <svg className="w-10 h-10 text-blue-500 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 10l-3-3m0 0l-3 3m3-3v12m-8-3a4 4 0 004 4h8a4 4 0 004-4v-8a4 4 0 00-4-4h-8a4 4 0 00-4 4v8z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+              d="M15 10l-3-3m0 0l-3 3m3-3v12
+                 m-8-3a4 4 0 004 4h8a4 4 0 004-4v-8
+                 a4 4 0 00-4-4h-8a4 4 0 00-4 4v8z" />
           </svg>
         </div>
         <h2 className="text-4xl font-extrabold mb-4 tracking-tight">Загрузка видео</h2>
@@ -530,22 +484,14 @@ function VideoUploader({ setFileForStats, setVideoDuration, setVideoFps, setVide
               <svg className="absolute w-full h-full" viewBox="0 0 36 36">
                 <path
                   className="text-gray-200 dark:text-gray-600"
-                  d="
-                    M18 2.0845
-                    a 15.9155 15.9155 0 0 1 0 31.831
-                    a 15.9155 15.9155 0 0 1 0 -31.831
-                  "
+                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="3.8"
                 />
                 <path
                   className={errorMessage ? "text-red-500 dark:text-red-600" : "text-blue-500 dark:text-blue-600"}
-                  d="
-                    M18 2.0845
-                    a 15.9155 15.9155 0 0 1 0 31.831
-                    a 15.9155 15.9155 0 0 1 0 -31.831
-                  "
+                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="3.8"
@@ -564,6 +510,7 @@ function VideoUploader({ setFileForStats, setVideoDuration, setVideoFps, setVide
           </div>
         )}
       </div>
+
       {showSuccessToast && (
         <Toast
           message="Видео успешно загружено и параметры классификации отправлены!"
@@ -594,76 +541,121 @@ export default function App() {
   const [fps, setFps] = useState(null);
   const [selectedFrame, setSelectedFrame] = useState(null);
   const [classificationResults, setClassificationResults] = useState([]);
+  const [showManualModal, setShowManualModal] = useState(false);
 
-  const openModal = (frame) => {
+  const openModal = frame => {
     setSelectedFrame(frame);
-    document.body.style.overflow = 'hidden'; // Отключаем прокрутку фона
+    document.body.style.overflow = 'hidden';
   };
-
   const closeModal = () => {
     setSelectedFrame(null);
-    document.body.style.overflow = 'auto'; // Включаем прокрутку фона
+    document.body.style.overflow = 'auto';
   };
 
-  // Отладочный лог для проверки classificationResults
+  const openManualModal = () => setShowManualModal(true);
+  const closeManualModal = () => setShowManualModal(false);
+
+  const handleManualClassification = async isSharp => {
+    const ok = window.confirm(
+      `Вы уверены? Результат классификации кадра №${selectedFrame.frame_number} будет перезаписан.`
+    );
+    if (!ok) {
+      closeManualModal();
+      return;
+    }
+
+    try {
+      const formBody = new URLSearchParams({
+        video_hash:    videoHash,
+        fps:           fps.toString(),
+        frame_number:  selectedFrame.frame_number.toString(),
+        loyalty:       loyalty.toString(),
+        is_sharp:      isSharp.toString(),
+      }).toString();
+
+      const res = await fetch(CORRECT_CLASSIFICATION_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Accept':       'application/json',
+        },
+        body: formBody,
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`HTTP ${res.status}: ${text}`);
+      }
+      const data = await res.json();
+      console.log('correct-classification response:', data);
+
+      setClassificationResults(cr =>
+        cr.map(r =>
+          Number(r.frame_number) === Number(selectedFrame.frame_number)
+            ? { ...r, is_sharp: isSharp }
+            : r
+        )
+      );
+    } catch (e) {
+      alert(`Не удалось сохранить исправление: ${e.message}`);
+    } finally {
+      closeManualModal();
+    }
+  };
+
   useEffect(() => {
     console.log('Current classificationResults:', classificationResults);
   }, [classificationResults]);
 
   return (
-  <div className="min-h-screen bg-gradient-to-tl from-blue-50 via-gray-100 to-blue-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 transition-all duration-500">
-    <Header />
-    <div className="flex flex-col md:flex-row justify-center items-start gap-10 pt-20 px-4">
-      <FrameGallery
-        frames={frames}
-        classificationResults={classificationResults}
-        openModal={openModal}
-      />
-      <VideoUploader
-        setFileForStats={setFileForStats}
-        setVideoDuration={setVideoDuration}
-        setVideoFps={setVideoFps}
-        setVideoResolution={setVideoResolution}
-        setFrames={setFrames}
-        samplingRate={samplingRate}
-        setVideoHash={setVideoHash}
-        setFps={setFps}
-        loyalty={loyalty}
-        setClassificationResults={setClassificationResults}
-      />
-      <div className="flex flex-col gap-10">
-        <Parameters
+    <div className="min-h-screen bg-gradient-to-tl from-blue-50 via-gray-100 to-blue-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 transition-all duration-500">
+      <Header />
+      <div className="flex flex-col md:flex-row justify-center items-start gap-10 pt-20 px-4">
+        <FrameGallery
+          frames={frames}
+          classificationResults={classificationResults}
+          openModal={openModal}
+        />
+        <VideoUploader
+          setFileForStats={setFileForStats}
+          setVideoDuration={setVideoDuration}
+          setVideoFps={setVideoFps}
+          setVideoResolution={setVideoResolution}
+          setFrames={setFrames}
           samplingRate={samplingRate}
-          setSamplingRate={setSamplingRate}
+          setVideoHash={setVideoHash}
+          setFps={setFps}
           loyalty={loyalty}
-          setLoyalty={setLoyalty}
+          setClassificationResults={setClassificationResults}
         />
-        <FileStats
-          file={fileForStats}
-          duration={videoDuration}
-          fps={videoFps}
-          resolution={videoResolution}
-          videoHash={videoHash}
-        />
+        <div className="flex flex-col gap-10">
+          <Parameters
+            samplingRate={samplingRate}
+            setSamplingRate={setSamplingRate}
+            loyalty={loyalty}
+            setLoyalty={setLoyalty}
+          />
+          <FileStats
+            file={fileForStats}
+            duration={videoDuration}
+            fps={videoFps}
+            resolution={videoResolution}
+            videoHash={videoHash}
+          />
+        </div>
       </div>
-    </div>
 
-    {selectedFrame && (
-      <div
-        className="fixed inset-0 bg-gradient-to-br from-gray-900/90 to-blue-900/90 flex items-center justify-center z-50 p-4 sm:p-8 animate-fade-in"
-        onClick={closeModal}
-      >
+      {selectedFrame && (
         <div
-          className="relative w-full h-full max-w-[95vw] max-h-[95vh] bg-gradient-to-br from-white to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-2xl shadow-3xl flex flex-col items-start justify-start overflow-hidden transform transition-all duration-300 scale-95 hover:scale-100 pt-8 px-6"
-          onClick={(e) => e.stopPropagation()}
+          className="fixed inset-0 bg-gradient-to-br from-gray-900/90 to-blue-900/90 flex items-start justify-center z-50 pt-[64px] p-4 sm:p-8 animate-fade-in"
+          onClick={closeModal}
         >
-          {/* Верхняя панель с заголовком и крестиком */}
-          <div className="w-full flex justify-between items-center mb-4">
-            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
-              Кадр №{selectedFrame.frame_number}
-            </h3>
+          <div
+            className="relative mt-[64px] w-full h-full max-w-[70vw] max-h-[70vh] bg-gradient-to-br from-white to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-2xl shadow-3xl flex flex-col items-start justify-start overflow-hidden transition-all duration-300 scale-95 hover:scale-100 pt-4 px-6"
+            onClick={e => e.stopPropagation()}
+          >
             <button
-              className="text-gray-500 hover:text-red-600 transition-colors duration-300"
+              className="absolute top-4 right-4 z-10 text-gray-500 hover:text-red-600 transition-colors duration-300"
               onClick={closeModal}
               aria-label="Закрыть"
             >
@@ -671,22 +663,97 @@ export default function App() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
-          </div>
 
-          {/* Контент модалки с изображением */}
-          <div className="relative w-full h-full flex items-center justify-center p-6">
-            <div className="absolute inset-0 m-4 rounded-xl bg-gradient-to-r from-blue-400 to-blue-600 opacity-20 blur-xl"></div>
-            <img
-              src={`${FRAMES_BASE_URL}${selectedFrame.url}`}
-              alt={`Frame ${selectedFrame.frame_number}`}
-              className="w-full h-full object-contain rounded-xl shadow-lg z-10"
-              onError={(e) => (e.target.src = 'https://via.placeholder.com/600?text=Error')}
-            />
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">
+              Кадр №{selectedFrame.frame_number}
+            </h3>
+
+            <button
+              className="
+                mb-4
+                bg-blue-500 text-white 
+                px-6 py-2 rounded-xl 
+                cursor-pointer 
+                hover:bg-blue-600 hover:shadow-lg 
+                focus:outline-none focus:ring-2 focus:ring-blue-400 
+                dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-500 
+                transition-all duration-300
+              "
+              onClick={openManualModal}
+            >
+              Изменить классификатор
+            </button>
+
+            <div className="relative w-full h-full flex items-center justify-center p-6">
+              <div className="absolute inset-0 m-4 rounded-xl bg-gradient-to-r from-blue-400 to-blue-600 opacity-20 blur-xl z-0"></div>
+              <img
+                src={`${FRAMES_BASE_URL}${selectedFrame.url}`}
+                alt={`Frame ${selectedFrame.frame_number}`}
+                className="w-full h-full object-contain rounded-xl shadow-lg z-10"
+                onError={e => (e.target.src = 'https://via.placeholder.com/600?text=Error')}
+              />
+            </div>
           </div>
         </div>
-      </div>
-    )}
-  </div>
-);
+      )}
 
+      {showManualModal && (
+        <div
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+          onClick={closeManualModal}
+        >
+          <div
+            className="
+              p-4 sm:p-8 
+              rounded-3xl 
+              w-full max-w-sm 
+              text-center 
+              bg-white dark:bg-gray-800 
+              shadow-2xl 
+              transition-all duration-300
+            "
+            onClick={e => e.stopPropagation()}
+          >
+            <h4 className="text-2xl font-extrabold mb-6 text-black dark:text-white">
+              Переклассификация
+            </h4>
+
+            <div className="flex justify-center gap-4 mb-6">
+              {/* Чёткое — теперь с синим фоном вместо зелёного */}
+              <button
+                onClick={()=>handleManualClassification(true)}
+                className="px-6 py-2 bg-blue-500 text-white rounded-xl cursor-pointer hover:bg-blue-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-500 transition-all duration-300"
+              >
+                Чёткое
+              </button>
+
+              {/* Нечёткое — красное, как и раньше */}
+              <button
+                onClick={()=>handleManualClassification(false)}
+                className="px-6 py-2 bg-red-500 text-white rounded-xl cursor-pointer hover:bg-red-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-red-400 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-500 transition-all duration-300"
+              >
+                Нечёткое
+              </button>
+            </div>
+
+            <button
+              className="
+                px-6 py-2 
+                bg-gray-200 text-black 
+                rounded-xl 
+                cursor-pointer 
+                hover:bg-gray-300 hover:shadow-lg 
+                focus:outline-none focus:ring-2 focus:ring-gray-400 
+                dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-500 
+                transition-all duration-300
+              "
+              onClick={closeManualModal}
+            >
+              Закрыть
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }

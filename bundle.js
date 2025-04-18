@@ -23546,6 +23546,7 @@
   var UPLOAD_BASE_URL = "http://172.29.62.95:8000";
   var FRAMES_BASE_URL = "http://172.29.62.95:9000";
   var CLASSIFICATION_URL = "http://172.29.62.95:8000/classifications/";
+  var CORRECT_CLASSIFICATION_URL = "http://172.29.62.95:8000/correct-classification/";
   function Header() {
     const [darkMode, setDarkMode] = (0, import_react.useState)(false);
     const [isRotating, setIsRotating] = (0, import_react.useState)(false);
@@ -23570,13 +23571,23 @@
         onAnimationEnd: () => setIsRotating(false),
         className: "absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white hover:text-blue-200 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400 hover:scale-110"
       },
-      /* @__PURE__ */ import_react.default.createElement("span", { className: isRotating ? "animate-spin-slow" : "" }, darkMode ? (
-        // Иконка солнца (для перехода в светлый режим)
-        /* @__PURE__ */ import_react.default.createElement("svg", { className: "w-8 h-8", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24" }, /* @__PURE__ */ import_react.default.createElement("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: "2", d: "M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" }))
-      ) : (
-        // Иконка луны (для перехода в тёмный режим)
-        /* @__PURE__ */ import_react.default.createElement("svg", { className: "w-8 h-8", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24" }, /* @__PURE__ */ import_react.default.createElement("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: "2", d: "M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" }))
-      ))
+      /* @__PURE__ */ import_react.default.createElement("span", { className: isRotating ? "animate-spin-slow" : "" }, darkMode ? /* @__PURE__ */ import_react.default.createElement("svg", { className: "w-8 h-8", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24" }, /* @__PURE__ */ import_react.default.createElement(
+        "path",
+        {
+          strokeLinecap: "round",
+          strokeLinejoin: "round",
+          strokeWidth: "2",
+          d: "M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707\r\n                   M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707\r\n                   M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+        }
+      )) : /* @__PURE__ */ import_react.default.createElement("svg", { className: "w-8 h-8", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24" }, /* @__PURE__ */ import_react.default.createElement(
+        "path",
+        {
+          strokeLinecap: "round",
+          strokeLinejoin: "round",
+          strokeWidth: "2",
+          d: "M20.354 15.354A9 9 0 018.646 3.646\r\n                   9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+        }
+      )))
     ), /* @__PURE__ */ import_react.default.createElement(
       "img",
       {
@@ -23595,9 +23606,7 @@
     return /* @__PURE__ */ import_react.default.createElement("div", { className: `fixed bottom-4 right-4 ${bgColor} text-white px-4 py-2 rounded-xl shadow-2xl flex items-center space-x-2 animate-toast-in` }, type === "success" ? /* @__PURE__ */ import_react.default.createElement("svg", { className: "w-6 h-6", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24" }, /* @__PURE__ */ import_react.default.createElement("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: "2", d: "M5 13l4 4L19 7" })) : /* @__PURE__ */ import_react.default.createElement("svg", { className: "w-6 h-6", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24" }, /* @__PURE__ */ import_react.default.createElement("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: "2", d: "M6 18L18 6M6 6l12 12" })), /* @__PURE__ */ import_react.default.createElement("span", null, message));
   }
   function FrameGallery({ frames, classificationResults, openModal }) {
-    const getSharpnessStatus = (frameNumber) => classificationResults.find(
-      (res) => Number(res.frame_number) === Number(frameNumber)
-    );
+    const getSharpnessStatus = (frameNumber) => classificationResults.find((res) => Number(res.frame_number) === Number(frameNumber));
     return /* @__PURE__ */ import_react.default.createElement("div", { className: "p-4 sm:p-8 rounded-3xl w-full sm:w-96 text-center bg-white dark:bg-gray-800 shadow-2xl hover:shadow-3xl hover:scale-105 transition-all duration-300" }, /* @__PURE__ */ import_react.default.createElement("h2", { className: "text-4xl font-extrabold mb-4 tracking-tight text-black dark:text-white" }, "\u0413\u0430\u043B\u0435\u0440\u0435\u044F \u043A\u0430\u0434\u0440\u043E\u0432"), frames && frames.length > 0 ? classificationResults.length === 0 ? /* @__PURE__ */ import_react.default.createElement("p", { className: "text-gray-500 dark:text-gray-400 text-lg" }, "\u041E\u0436\u0438\u0434\u0430\u043D\u0438\u0435 \u043A\u043B\u0430\u0441\u0441\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u0438...") : /* @__PURE__ */ import_react.default.createElement("div", { className: "flex flex-wrap justify-center gap-4" }, frames.map((frame) => {
       const result = getSharpnessStatus(frame.frame_number);
       const isSharp = result?.is_sharp;
@@ -23617,51 +23626,12 @@
             onError: (e) => e.target.src = "https://via.placeholder.com/150?text=Error"
           }
         ),
-        isSharp != null && /* @__PURE__ */ import_react.default.createElement("div", { className: "absolute inset-0 flex items-center justify-center" }, isSharp ? /* @__PURE__ */ import_react.default.createElement(
-          "svg",
-          {
-            xmlns: "http://www.w3.org/2000/svg",
-            className: "w-10 h-10",
-            fill: "none",
-            viewBox: "0 0 24 24",
-            stroke: "currentColor",
-            strokeWidth: 2,
-            style: { color: "#66FF00" }
-          },
-          /* @__PURE__ */ import_react.default.createElement(
-            "path",
-            {
-              strokeLinecap: "round",
-              strokeLinejoin: "round",
-              d: "M5 13l4 4L19 7"
-            }
-          )
-        ) : /* @__PURE__ */ import_react.default.createElement(
-          "svg",
-          {
-            xmlns: "http://www.w3.org/2000/svg",
-            className: "w-10 h-10 text-red-500",
-            fill: "none",
-            viewBox: "0 0 24 24",
-            stroke: "currentColor",
-            strokeWidth: 2
-          },
-          /* @__PURE__ */ import_react.default.createElement(
-            "path",
-            {
-              strokeLinecap: "round",
-              strokeLinejoin: "round",
-              d: "M6 18L18 6M6 6l12 12"
-            }
-          )
-        ))
+        isSharp != null && /* @__PURE__ */ import_react.default.createElement("div", { className: "absolute inset-0 flex items-center justify-center" }, isSharp ? /* @__PURE__ */ import_react.default.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", className: "w-10 h-10", fill: "none", viewBox: "0 0 24 24", stroke: "currentColor", strokeWidth: 2, style: { color: "#66FF00" } }, /* @__PURE__ */ import_react.default.createElement("path", { strokeLinecap: "round", strokeLinejoin: "round", d: "M5 13l4 4L19 7" })) : /* @__PURE__ */ import_react.default.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", className: "w-10 h-10 text-red-500", fill: "none", viewBox: "0 0 24 24", stroke: "currentColor", strokeWidth: 2 }, /* @__PURE__ */ import_react.default.createElement("path", { strokeLinecap: "round", strokeLinejoin: "round", d: "M6 18L18 6M6 6l12 12" })))
       );
     })) : /* @__PURE__ */ import_react.default.createElement("p", { className: "text-gray-500 dark:text-gray-400 text-lg" }, "\u041A\u0430\u0434\u0440\u044B \u043E\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0443\u044E\u0442"));
   }
   function Parameters({ samplingRate, setSamplingRate, loyalty, setLoyalty }) {
-    const handleLoyaltyChange = (value) => {
-      setLoyalty(value);
-    };
+    const handleLoyaltyChange = (value) => setLoyalty(value);
     return /* @__PURE__ */ import_react.default.createElement("div", { className: "p-4 sm:p-8 rounded-3xl w-full sm:w-96 text-center bg-white dark:bg-gray-800 shadow-2xl hover:shadow-3xl hover:scale-105 transition-all duration-300" }, /* @__PURE__ */ import_react.default.createElement("h2", { className: "text-4xl font-extrabold mb-4 tracking-tight text-black dark:text-white" }, "\u041F\u0430\u0440\u0430\u043C\u0435\u0442\u0440\u044B"), /* @__PURE__ */ import_react.default.createElement("div", { className: "text-left text-gray-700 dark:text-gray-300" }, /* @__PURE__ */ import_react.default.createElement("div", { className: "mb-4" }, /* @__PURE__ */ import_react.default.createElement("label", { className: "block mb-2 font-semibold" }, "\u0427\u0430\u0441\u0442\u043E\u0442\u0430 \u0432\u044B\u0431\u043E\u0440\u043A\u0438 \u043A\u0430\u0434\u0440\u0430 \u0441 \u0432\u0438\u0434\u0435\u043E: ", samplingRate), /* @__PURE__ */ import_react.default.createElement(
       "input",
       {
@@ -23701,7 +23671,7 @@
         return;
       }
       try {
-        const response = await fetch(`http://172.29.62.95:8000/reports/${videoHash}/full/?format=json`);
+        const response = await fetch(`${UPLOAD_BASE_URL}/reports/${videoHash}/full/?format=json`);
         if (!response.ok) throw new Error("\u041E\u0448\u0438\u0431\u043A\u0430 \u043F\u0440\u0438 \u043F\u043E\u043B\u0443\u0447\u0435\u043D\u0438\u0438 \u043E\u0442\u0447\u0435\u0442\u0430");
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
@@ -23726,7 +23696,18 @@
       "\u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C JSON"
     ))) : /* @__PURE__ */ import_react.default.createElement("p", { className: "text-gray-500 dark:text-gray-400 text-lg" }, "\u0424\u0430\u0439\u043B \u043D\u0435 \u0432\u044B\u0431\u0440\u0430\u043D"));
   }
-  function VideoUploader({ setFileForStats, setVideoDuration, setVideoFps, setVideoResolution, setFrames, samplingRate, setVideoHash, setFps, loyalty, setClassificationResults }) {
+  function VideoUploader({
+    setFileForStats,
+    setVideoDuration,
+    setVideoFps,
+    setVideoResolution,
+    setFrames,
+    samplingRate,
+    setVideoHash,
+    setFps,
+    loyalty,
+    setClassificationResults
+  }) {
     const [dragActive, setDragActive] = (0, import_react.useState)(false);
     const [file, setFile] = (0, import_react.useState)(null);
     const [uploadProgress, setUploadProgress] = (0, import_react.useState)(0);
@@ -23792,13 +23773,8 @@
     const fetchFrames = async (videoHash, fps) => {
       try {
         const framesUrl = `${UPLOAD_BASE_URL}/frames/${videoHash}/${fps}/`;
-        const res = await fetch(framesUrl, {
-          method: "GET",
-          headers: { Accept: "application/json" }
-        });
-        if (!res.ok) {
-          throw new Error(`\u041E\u0448\u0438\u0431\u043A\u0430 \u043F\u043E\u043B\u0443\u0447\u0435\u043D\u0438\u044F \u043A\u0430\u0434\u0440\u043E\u0432: ${res.status}`);
-        }
+        const res = await fetch(framesUrl, { method: "GET", headers: { Accept: "application/json" } });
+        if (!res.ok) throw new Error(`\u041E\u0448\u0438\u0431\u043A\u0430 \u043F\u043E\u043B\u0443\u0447\u0435\u043D\u0438\u044F \u043A\u0430\u0434\u0440\u043E\u0432: ${res.status}`);
         const data = await res.json();
         console.log("Frames fetched:", data);
         setFrames(data.frames || []);
@@ -23897,7 +23873,15 @@
         onDrop: handleDrop,
         className: `border-2 border-dashed border-blue-400 p-6 rounded-2xl transition-all duration-300 bg-white dark:bg-gray-900 text-black dark:text-white shadow-2xl ${dragActive ? "border-blue-500 bg-blue-50 dark:bg-blue-800 scale-105" : ""}`
       },
-      /* @__PURE__ */ import_react.default.createElement("div", { className: "flex justify-center mb-4" }, /* @__PURE__ */ import_react.default.createElement("svg", { className: "w-10 h-10 text-blue-500 dark:text-blue-400", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24" }, /* @__PURE__ */ import_react.default.createElement("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: "2", d: "M15 10l-3-3m0 0l-3 3m3-3v12m-8-3a4 4 0 004 4h8a4 4 0 004-4v-8a4 4 0 00-4-4h-8a4 4 0 00-4 4v8z" }))),
+      /* @__PURE__ */ import_react.default.createElement("div", { className: "flex justify-center mb-4" }, /* @__PURE__ */ import_react.default.createElement("svg", { className: "w-10 h-10 text-blue-500 dark:text-blue-400", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24" }, /* @__PURE__ */ import_react.default.createElement(
+        "path",
+        {
+          strokeLinecap: "round",
+          strokeLinejoin: "round",
+          strokeWidth: "2",
+          d: "M15 10l-3-3m0 0l-3 3m3-3v12\r\n                 m-8-3a4 4 0 004 4h8a4 4 0 004-4v-8\r\n                 a4 4 0 00-4-4h-8a4 4 0 00-4 4v8z"
+        }
+      ))),
       /* @__PURE__ */ import_react.default.createElement("h2", { className: "text-4xl font-extrabold mb-4 tracking-tight" }, "\u0417\u0430\u0433\u0440\u0443\u0437\u043A\u0430 \u0432\u0438\u0434\u0435\u043E"),
       /* @__PURE__ */ import_react.default.createElement("p", { className: "mb-4 text-gray-500 dark:text-gray-400 text-lg" }, "\u0412\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u0438\u043B\u0438 \u043F\u0435\u0440\u0435\u0442\u0430\u0449\u0438\u0442\u0435 \u0432\u0438\u0434\u0435\u043E (MP4, AVI, MOV)"),
       /* @__PURE__ */ import_react.default.createElement("div", { className: "flex justify-center" }, /* @__PURE__ */ import_react.default.createElement(
@@ -23929,7 +23913,7 @@
         "path",
         {
           className: "text-gray-200 dark:text-gray-600",
-          d: "\r\n                    M18 2.0845\r\n                    a 15.9155 15.9155 0 0 1 0 31.831\r\n                    a 15.9155 15.9155 0 0 1 0 -31.831\r\n                  ",
+          d: "M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831",
           fill: "none",
           stroke: "currentColor",
           strokeWidth: "3.8"
@@ -23938,7 +23922,7 @@
         "path",
         {
           className: errorMessage ? "text-red-500 dark:text-red-600" : "text-blue-500 dark:text-blue-600",
-          d: "\r\n                    M18 2.0845\r\n                    a 15.9155 15.9155 0 0 1 0 31.831\r\n                    a 15.9155 15.9155 0 0 1 0 -31.831\r\n                  ",
+          d: "M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831",
           fill: "none",
           stroke: "currentColor",
           strokeWidth: "3.8",
@@ -23973,6 +23957,7 @@
     const [fps, setFps] = (0, import_react.useState)(null);
     const [selectedFrame, setSelectedFrame] = (0, import_react.useState)(null);
     const [classificationResults, setClassificationResults] = (0, import_react.useState)([]);
+    const [showManualModal, setShowManualModal] = (0, import_react.useState)(false);
     const openModal = (frame) => {
       setSelectedFrame(frame);
       document.body.style.overflow = "hidden";
@@ -23980,6 +23965,49 @@
     const closeModal = () => {
       setSelectedFrame(null);
       document.body.style.overflow = "auto";
+    };
+    const openManualModal = () => setShowManualModal(true);
+    const closeManualModal = () => setShowManualModal(false);
+    const handleManualClassification = async (isSharp) => {
+      const ok = window.confirm(
+        `\u0412\u044B \u0443\u0432\u0435\u0440\u0435\u043D\u044B? \u0420\u0435\u0437\u0443\u043B\u044C\u0442\u0430\u0442 \u043A\u043B\u0430\u0441\u0441\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u0438 \u043A\u0430\u0434\u0440\u0430 \u2116${selectedFrame.frame_number} \u0431\u0443\u0434\u0435\u0442 \u043F\u0435\u0440\u0435\u0437\u0430\u043F\u0438\u0441\u0430\u043D.`
+      );
+      if (!ok) {
+        closeManualModal();
+        return;
+      }
+      try {
+        const formBody = new URLSearchParams({
+          video_hash: videoHash,
+          fps: fps.toString(),
+          frame_number: selectedFrame.frame_number.toString(),
+          loyalty: loyalty.toString(),
+          is_sharp: isSharp.toString()
+        }).toString();
+        const res = await fetch(CORRECT_CLASSIFICATION_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Accept": "application/json"
+          },
+          body: formBody
+        });
+        if (!res.ok) {
+          const text = await res.text();
+          throw new Error(`HTTP ${res.status}: ${text}`);
+        }
+        const data = await res.json();
+        console.log("correct-classification response:", data);
+        setClassificationResults(
+          (cr) => cr.map(
+            (r) => Number(r.frame_number) === Number(selectedFrame.frame_number) ? { ...r, is_sharp: isSharp } : r
+          )
+        );
+      } catch (e) {
+        alert(`\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0438\u0441\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u0435: ${e.message}`);
+      } finally {
+        closeManualModal();
+      }
     };
     (0, import_react.useEffect)(() => {
       console.log("Current classificationResults:", classificationResults);
@@ -24025,25 +24053,34 @@
     ))), selectedFrame && /* @__PURE__ */ import_react.default.createElement(
       "div",
       {
-        className: "fixed inset-0 bg-gradient-to-br from-gray-900/90 to-blue-900/90 flex items-center justify-center z-50 p-4 sm:p-8 animate-fade-in",
+        className: "fixed inset-0 bg-gradient-to-br from-gray-900/90 to-blue-900/90 flex items-start justify-center z-50 pt-[64px] p-4 sm:p-8 animate-fade-in",
         onClick: closeModal
       },
       /* @__PURE__ */ import_react.default.createElement(
         "div",
         {
-          className: "relative w-full h-full max-w-[95vw] max-h-[95vh] bg-gradient-to-br from-white to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-2xl shadow-3xl flex flex-col items-start justify-start overflow-hidden transform transition-all duration-300 scale-95 hover:scale-100 pt-8 px-6",
+          className: "relative mt-[64px] w-full h-full max-w-[70vw] max-h-[70vh] bg-gradient-to-br from-white to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-2xl shadow-3xl flex flex-col items-start justify-start overflow-hidden transition-all duration-300 scale-95 hover:scale-100 pt-4 px-6",
           onClick: (e) => e.stopPropagation()
         },
-        /* @__PURE__ */ import_react.default.createElement("div", { className: "w-full flex justify-between items-center mb-4" }, /* @__PURE__ */ import_react.default.createElement("h3", { className: "text-lg font-semibold text-gray-800 dark:text-gray-200" }, "\u041A\u0430\u0434\u0440 \u2116", selectedFrame.frame_number), /* @__PURE__ */ import_react.default.createElement(
+        /* @__PURE__ */ import_react.default.createElement(
           "button",
           {
-            className: "text-gray-500 hover:text-red-600 transition-colors duration-300",
+            className: "absolute top-4 right-4 z-10 text-gray-500 hover:text-red-600 transition-colors duration-300",
             onClick: closeModal,
             "aria-label": "\u0417\u0430\u043A\u0440\u044B\u0442\u044C"
           },
           /* @__PURE__ */ import_react.default.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", className: "h-6 w-6", fill: "none", viewBox: "0 0 24 24", stroke: "currentColor" }, /* @__PURE__ */ import_react.default.createElement("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M6 18L18 6M6 6l12 12" }))
-        )),
-        /* @__PURE__ */ import_react.default.createElement("div", { className: "relative w-full h-full flex items-center justify-center p-6" }, /* @__PURE__ */ import_react.default.createElement("div", { className: "absolute inset-0 m-4 rounded-xl bg-gradient-to-r from-blue-400 to-blue-600 opacity-20 blur-xl" }), /* @__PURE__ */ import_react.default.createElement(
+        ),
+        /* @__PURE__ */ import_react.default.createElement("h3", { className: "text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4" }, "\u041A\u0430\u0434\u0440 \u2116", selectedFrame.frame_number),
+        /* @__PURE__ */ import_react.default.createElement(
+          "button",
+          {
+            className: "\r\n                mb-4\r\n                bg-blue-500 text-white \r\n                px-6 py-2 rounded-xl \r\n                cursor-pointer \r\n                hover:bg-blue-600 hover:shadow-lg \r\n                focus:outline-none focus:ring-2 focus:ring-blue-400 \r\n                dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-500 \r\n                transition-all duration-300\r\n              ",
+            onClick: openManualModal
+          },
+          "\u0418\u0437\u043C\u0435\u043D\u0438\u0442\u044C \u043A\u043B\u0430\u0441\u0441\u0438\u0444\u0438\u043A\u0430\u0442\u043E\u0440"
+        ),
+        /* @__PURE__ */ import_react.default.createElement("div", { className: "relative w-full h-full flex items-center justify-center p-6" }, /* @__PURE__ */ import_react.default.createElement("div", { className: "absolute inset-0 m-4 rounded-xl bg-gradient-to-r from-blue-400 to-blue-600 opacity-20 blur-xl z-0" }), /* @__PURE__ */ import_react.default.createElement(
           "img",
           {
             src: `${FRAMES_BASE_URL}${selectedFrame.url}`,
@@ -24052,6 +24089,43 @@
             onError: (e) => e.target.src = "https://via.placeholder.com/600?text=Error"
           }
         ))
+      )
+    ), showManualModal && /* @__PURE__ */ import_react.default.createElement(
+      "div",
+      {
+        className: "fixed inset-0 bg-black/50 flex items-center justify-center z-50",
+        onClick: closeManualModal
+      },
+      /* @__PURE__ */ import_react.default.createElement(
+        "div",
+        {
+          className: "\r\n              p-4 sm:p-8 \r\n              rounded-3xl \r\n              w-full max-w-sm \r\n              text-center \r\n              bg-white dark:bg-gray-800 \r\n              shadow-2xl \r\n              transition-all duration-300\r\n            ",
+          onClick: (e) => e.stopPropagation()
+        },
+        /* @__PURE__ */ import_react.default.createElement("h4", { className: "text-2xl font-extrabold mb-6 text-black dark:text-white" }, "\u041F\u0435\u0440\u0435\u043A\u043B\u0430\u0441\u0441\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u044F"),
+        /* @__PURE__ */ import_react.default.createElement("div", { className: "flex justify-center gap-4 mb-6" }, /* @__PURE__ */ import_react.default.createElement(
+          "button",
+          {
+            onClick: () => handleManualClassification(true),
+            className: "px-6 py-2 bg-blue-500 text-white rounded-xl cursor-pointer hover:bg-blue-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-500 transition-all duration-300"
+          },
+          "\u0427\u0451\u0442\u043A\u043E\u0435"
+        ), /* @__PURE__ */ import_react.default.createElement(
+          "button",
+          {
+            onClick: () => handleManualClassification(false),
+            className: "px-6 py-2 bg-red-500 text-white rounded-xl cursor-pointer hover:bg-red-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-red-400 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-500 transition-all duration-300"
+          },
+          "\u041D\u0435\u0447\u0451\u0442\u043A\u043E\u0435"
+        )),
+        /* @__PURE__ */ import_react.default.createElement(
+          "button",
+          {
+            className: "\r\n                px-6 py-2 \r\n                bg-gray-200 text-black \r\n                rounded-xl \r\n                cursor-pointer \r\n                hover:bg-gray-300 hover:shadow-lg \r\n                focus:outline-none focus:ring-2 focus:ring-gray-400 \r\n                dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-500 \r\n                transition-all duration-300\r\n              ",
+            onClick: closeManualModal
+          },
+          "\u0417\u0430\u043A\u0440\u044B\u0442\u044C"
+        )
       )
     ));
   }
